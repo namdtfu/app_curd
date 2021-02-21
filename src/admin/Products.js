@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Wrapper from './Wrapper'
 
 const Products = () => {
@@ -19,8 +20,24 @@ const Products = () => {
         )()
     }, [])
 
+    const del = async (id) => {
+        if (window.confirm('Are you sure you want to delete this product?')) {
+            await fetch(`http://localhost:8000/api/products/${id}`, {
+                method: 'DELETE'
+            })
+
+            setProducts(products.filter(p => p.id !== id))
+        }
+    }
+
     return (
         <Wrapper>
+            <div className="pt-3 pb-2 mb-3 border-bottom">
+                <div className="btn-toolbar mb-2 mb-md-0">
+                    <Link to='/admin/products/create' className="btn btn-sm btn-outline-secondary">Add</Link>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -37,14 +54,19 @@ const Products = () => {
                             return (
                                 <tr key={p.id}>
                                     <td>{p.id}</td>
-                                    <td><img src={p.image} height="180" /></td>
+                                    <td><img src={p.image} height="50" /></td>
                                     <td>{p.title}</td>
                                     <td>{p.likes}</td>
-                                    <td></td>
+                                    <td>
+                                        <div className="btn-group mr-2">
+                                            <a href="#" className="btn btn-sm btn-outline-secondary"
+                                                onClick={() => del(p.id)}>Delete</a>
+                                        </div>
+                                    </td>
                                 </tr>
                             )
                         })}
-                        
+
                     </tbody>
                 </table>
             </div>
